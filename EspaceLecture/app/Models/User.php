@@ -17,11 +17,14 @@ class User extends Authenticatable
         'password',
         'role',
         'avatar',
+        'banned_at'
     ];
 
+
+    
     protected $hidden = [
         'password',
-        'remember_token',
+        
     ];
 
     protected $casts = [
@@ -43,4 +46,10 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function isBanned()
+    {
+        return !is_null($this->banned_at);
+    }
+
 }

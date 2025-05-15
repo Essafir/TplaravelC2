@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\CheckRole;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

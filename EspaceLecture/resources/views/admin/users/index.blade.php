@@ -10,10 +10,9 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
+               <table class="table table-bordered">
                     <thead>
-                        <tr class="bg-gray-100">
-                            <th>ID</th>
+                        <tr>
                             <th>Nom</th>
                             <th>Email</th>
                             <th>Rôle</th>
@@ -24,45 +23,28 @@
                     <tbody>
                         @foreach($users as $user)
                         <tr>
-                            <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
+                            <td>{{ ucfirst($user->role) }}</td>
                             <td>
-                                <span class="badge badge-{{ $user->role === 'admin' ? 'success' : 'info' }}">
-                                    {{ $user->role }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($user->banned_at)
-                                    <span class="badge badge-danger">Banni</span>
+                                @if($user->isBanned())
+                                    <span class="badge bg-danger">Banni</span>
                                 @else
-                                    <span class="badge badge-success">Actif</span>
+                                    <span class="badge bg-success">Actif</span>
                                 @endif
                             </td>
                             <td>
-                                <div class="d-flex">
-                                    <a href="{{ route('admin.users.edit', $user->id) }}" 
-                                       class="btn btn-sm btn-primary mr-2">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    
-                                    @if($user->banned_at)
-                                        <form action="{{ route('admin.users.unban', $user->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success">
-                                                <i class="fas fa-check-circle"></i> Débannir
-                                            </button>
-                                        </form>
-                                    @else
-                                        <form action="{{ route('admin.users.ban', $user->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-warning" 
-                                                    onclick="return confirm('Confirmer le bannissement ?')">
-                                                <i class="fas fa-ban"></i> Bannir
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
+                                @if($user->isBanned())
+                                    <form action="{{ route('admin.users.unban', $user) }}" method="POST">
+                                        @csrf
+                                        <button class="btn btn-sm btn-success">Débannir</button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('admin.users.ban', $user) }}" method="POST">
+                                        @csrf
+                                        <button class="btn btn-sm btn-warning">Bannir</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                         @endforeach
