@@ -1,5 +1,4 @@
-@extends('layouts.app')
-
+@extends('layouts.admin')
 @section('title', 'Tableau de bord Admin')
 
 @section('content')
@@ -43,10 +42,9 @@
                         @foreach($stats['recentBooks'] as $book)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('books.show', $book) }}" class="text-blue-600 hover:text-blue-800">{{ $book->title }}</a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $book->author }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $book->published_at->format('d/m/Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ \Carbon\Carbon::parse($book->published_at)->format('d/m/Y') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $book->status == 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         {{ $book->status == 'available' ? 'Disponible' : 'Emprunté' }}
@@ -79,7 +77,6 @@
                         @foreach($stats['topRatedBooks'] as $book)
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('books.show', $book) }}" class="text-blue-600 hover:text-blue-800">{{ $book->title }}</a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">{{ $book->author }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">

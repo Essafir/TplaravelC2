@@ -1,5 +1,4 @@
-@extends('admin.layouts.app')
-
+@extends('layouts.admin')
 @section('title', 'Edit Book')
 
 @section('content')
@@ -56,8 +55,8 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="published_at">Published Date *</label>
-                                <input type="date" name="published_at" id="published_at" class="form-control @error('published_at') is-invalid @enderror" value="{{ old('published_at', $book->published_at->format('Y-m-d')) }}" required>
-                                @error('published_at')
+
+                                    <input type="date" name="published_at" id="published_at" class="form-control @error('published_at') is-invalid @enderror" value="{{ old('published_at', \Carbon\Carbon::parse($book->published_at)->format('Y-m-d')) }}" required>                                @error('published_at')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>

@@ -70,4 +70,5 @@ class Kernel extends HttpKernel
     // ... other middleware
     'role' => \App\Http\Middleware\CheckRole::class,
 ];
+
 }

@@ -50,6 +50,7 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <a href="{{ route('admin.books.show', $book) }}" class="btn btn-sm btn-info" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.books.edit', $book) }}" class="btn btn-sm btn-primary" title="Edit">
