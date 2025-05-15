@@ -14,7 +14,6 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'), // Mot de passe par défaut
-            'remember_token' => Str::random(10),
             'role' => $this->faker->randomElement(['user', 'admin']),
             'avatar' => $this->faker->optional()->imageUrl(100, 100, 'people'),
         ];
