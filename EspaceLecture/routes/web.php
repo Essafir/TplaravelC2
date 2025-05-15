@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -26,43 +29,51 @@ Route::get('/', function () {
 // Authentification (Breeze)
 require __DIR__.'/auth.php';
 
-// Livres
-Route::resource('books', BookController::class)->only(['index', 'show']);
+// User routes (protected by auth and user role)
+// Route::middleware(['auth', 'role:user'])->group(function () {
+//     // Main user dashboard
+//     Route::get('/dashboard', [UserController::class, 'dashboard'])
+//         ->name('dashboard');
+    
+//     // User profile routes
+//     Route::prefix('profile')->group(function () {
+//         Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
+//         Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+//         Route::patch('/update', [ProfileController::class, 'update'])->name('profile.update');
+//     });
+    
+//     // Book-related routes
+//     Route::resource('books', BookController::class)->only(['index', 'show']);
+    
+//     // Review routes
+//     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
+//         ->name('reviews.store');
+// });
 
-// Routes nécessitant une authentification
-Route::middleware(['auth'])->group(function () {
-    // Profil utilisateur
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
-    });
+// Admin routes (protected by auth and admin role)
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Admin dashboard
+    Route::get('/dashboard', [BookController::class, 'dashboard'])
+        ->name('admin.dashboard');
     
-    // Commentaires
-    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    // Books management
+    Route::resource('books', BookController::class)->except(['show']);
     
-    // Routes admin
-    Route::middleware(['admin'])->group(function () {
-        // Gestion des livres (CRUD complet)
-        Route::resource('books', BookController::class)->except(['index', 'show']);
-        
-        // Gestion des catégories
-        Route::resource('categories', CategoryController::class);
-        
-        // Tableau de bord admin
-        Route::prefix('admin')->group(function () {
-            Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-            Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
-            Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
-        });
-        
-    });
+    // Categories management
+    Route::resource('categories', CategoryController::class)->except(['show']);
+    
 });
 
-Route::get('/test', function () {
-    return view('test');
+// Public routes (accessible to all)
+Route::middleware('guest')->group(function () {
+    // Authentication routes (from Breeze)
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('register', [RegisteredUserController::class, 'store']);
+    // ... other auth routes
 });
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard')->middleware('auth');
+
+// Common authenticated routes (accessible to all logged in users)
+Route::middleware('auth')->group(function () {
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
+});
