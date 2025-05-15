@@ -7,6 +7,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'author',
+        'summary',
+        'pages',
+        'published_at',
+        'cover',
+        'category_id',
+        'status',
+    ];
+
+    protected $dates = ['published_at'];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?: 0;
+    }
 }

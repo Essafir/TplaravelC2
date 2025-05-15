@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class SearchHistory extends Model
 {
-    /** @use HasFactory<\Database\Factories\SearchHistoryFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'query',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
