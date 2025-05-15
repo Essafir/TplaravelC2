@@ -56,5 +56,13 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
             Route::put('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.update-role');
         });
+        
     });
 });
+
+Route::get('/test', function () {
+    return view('test');
+});
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard')->middleware('auth');
