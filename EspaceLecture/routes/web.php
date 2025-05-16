@@ -85,6 +85,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'update' => 'categories.update',
         'destroy' => 'categories.destroy'
     ]);
+
+    // Categories (uncomment if you have a CategoryController)
+    // Route::resource('categories', CategoryController::class)->names([
+    //     'index' => 'categories.index',
+    //     'create' => 'categories.create',
+    //     'store' => 'categories.store',
+    //     'show' => 'categories.show',
+    //     'edit' => 'categories.edit',
+    //     'update' => 'categories.update',
+    //     'destroy' => 'categories.destroy'
+    // ]);
     // Routes pour la gestion des utilisateurs
   
 });
