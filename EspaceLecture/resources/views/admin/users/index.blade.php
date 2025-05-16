@@ -35,14 +35,18 @@
                             </td>
                             <td>
                                 @if($user->isBanned())
-                                    <form action="{{ route('admin.users.unban', $user) }}" method="POST">
-                                        @csrf
-                                        <button class="btn btn-sm btn-success">Débannir</button>
-                                    </form>
+                                   <form action="{{ route('admin.users.ban', $user->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-ban"></i> Bannir
+                                </button>
+                               </form>
                                 @else
-                                    <form action="{{ route('admin.users.ban', $user) }}" method="POST">
+                                   <form action="{{ route('admin.users.unban', $user->id) }}" method="POST">
                                         @csrf
-                                        <button class="btn btn-sm btn-warning">Bannir</button>
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-check-circle"></i> Débannir
+                                        </button>
                                     </form>
                                 @endif
                             </td>

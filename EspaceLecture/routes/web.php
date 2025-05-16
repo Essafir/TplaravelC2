@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Uncomment and create these controllers if you want to use them
 // use App\Http\Controllers\Admin\CategoryController;
-// use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Middleware\CheckRole;
 
 
@@ -43,7 +43,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'update' => 'books.update',
         'destroy' => 'books.destroy'
     ]);
+ 
 
+    // Routes pour la gestion des utilisateurs
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    
+    // Routes pour bannir/débannir
+        Route::post('/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
+        Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
     // Categories (uncomment if you have a CategoryController)
     // Route::resource('categories', CategoryController::class)->names([
     //     'index' => 'categories.index',
