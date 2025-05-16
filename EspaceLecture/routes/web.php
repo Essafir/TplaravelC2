@@ -1,8 +1,9 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\CategoryController;
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Uncomment and create these controllers if you want to use them
 // use App\Http\Controllers\Admin\CategoryController;
@@ -55,6 +56,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         Route::post('/{user}/ban', [UserController::class, 'ban'])->name('ban');
         Route::post('/{user}/unban', [UserController::class, 'unban'])->name('unban');
     });
+    Route::resource('categories', CategoryController::class)->names([
+        'index' => 'categories.index',
+        'create' => 'categories.create',
+        'store' => 'categories.store',
+        'show' => 'categories.show',
+        'edit' => 'categories.edit',
+        'update' => 'categories.update',
+        'destroy' => 'categories.destroy'
+    ]);
+    // Routes pour la gestion des utilisateurs
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+    
+    // Routes pour bannir/débannir
+        Route::post('/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
+        Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
     // Categories (uncomment if you have a CategoryController)
     // Route::resource('categories', CategoryController::class)->names([
     //     'index' => 'categories.index',
@@ -66,8 +84,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
     //     'destroy' => 'categories.destroy'
     // ]);
 
-    // Users (uncomment if you have a UserController)
-    // Route::get('users', [UserController::class, 'index'])->name('users.index');
 });
 
 // Common authenticated routes (for all logged-in users)
