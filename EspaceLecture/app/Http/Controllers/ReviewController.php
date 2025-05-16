@@ -9,33 +9,31 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'book_id' => 'required|exists:books,id',
-            'rating' => 'required|integer|between:1,5',
-            'comment' => 'nullable|string|max:1000',
-        ]);
+    public function store(Request $request, Book $book)
+{
+    $request->validate([
+        'rating' => 'required|integer|between:1,5',
+        'comment' => 'nullable|string|max:1000',
+    ]);
 
-        // Check if user already reviewed this book
-        $existingReview = Review::where('user_id', Auth::id())
-            ->where('book_id', $request->book_id)
-            ->first();
+    // Check if user already reviewed this book
+    $existingReview = Review::where('user_id', Auth::id())
+        ->where('book_id', $book->id)
+        ->first();
 
-        if ($existingReview) {
-            return back()->with('error', 'Vous avez déjà donné votre avis sur ce livre.');
-        }
-
-        Review::create([
-            'user_id' => Auth::id(),
-            'book_id' => $request->book_id,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
-        ]);
-
-        return back()->with('success', 'Votre avis a été enregistré avec succès.');
+    if ($existingReview) {
+        return back()->with('error', 'Vous avez déjà donné votre avis sur ce livre.');
     }
-    public function destroy(Review $review)
+
+    Review::create([
+        'user_id' => Auth::id(),
+        'book_id' => $book->id,
+        'rating' => $request->rating,
+        'comment' => $request->comment,
+    ]);
+
+    return back()->with('success', 'Votre avis a été enregistré avec succès.');
+}    public function destroy(Review $review)
     {
         // Seul l'auteur de l'avis ou un admin peut le supprimer
         if ($review->user_id !== Auth::id() && !Auth::user()->isAdmin()) {

@@ -71,14 +71,16 @@
                 <div class="logo">EspaceLecture</div>
                 <div>
                     <a href="{{ route('welcome') }}">Home</a>
-                    <a href="{{ route('user.index') }}">Books</a>
                     @auth
                         <form action="{{ route('logout') }}" method="POST" style="display: inline;">
                             @csrf
+                            <a href="{{ route('user.index') }}">Books</a>
                             <a href="{{ route('user.profile') }}">profile</a>
+
                             <button type="submit" style="background: none; border: none; color: white; cursor: pointer;">Logout</button>
                         </form>
                     @else
+                        <a href="{{ route('books.index') }}">Books</a>
                         <a href="{{ route('login') }}">Login</a>
                         <a href="{{ route('register') }}">Register</a>
                     @endauth

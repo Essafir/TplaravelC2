@@ -61,13 +61,13 @@
                 <div>
                     <span class="me-2">Trier par:</span>
                     <div class="btn-group">
-                        <a href="{{ route('books.index', array_merge(request()->query(), ['sort' => 'recent'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'recent' ? 'active' : '' }}">
+                        <a href="{{ route('user.index', array_merge(request()->query(), ['sort' => 'recent'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'recent' ? 'active' : '' }}">
                             Plus récents
                         </a>
-                        <a href="{{ route('books.index', array_merge(request()->query(), ['sort' => 'popular'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'popular' ? 'active' : '' }}">
+                        <a href="{{ route('user.index', array_merge(request()->query(), ['sort' => 'popular'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'popular' ? 'active' : '' }}">
                             Plus populaires
                         </a>
-                        <a href="{{ route('books.index', array_merge(request()->query(), ['sort' => 'rating'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'rating' ? 'active' : '' }}">
+                        <a href="{{ route('user.index', array_merge(request()->query(), ['sort' => 'rating'])) }}" class="btn btn-outline-secondary {{ request('sort') == 'rating' ? 'active' : '' }}">
                             Meilleures notes
                         </a>
                     </div>
@@ -77,38 +77,57 @@
             <div class="row">
                 @foreach($books as $book)
                     <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <img src="{{ $book->cover_url }}" class="card-img-top" alt="{{ $book->title }}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $book->title }}</h5>
-                                <p class="card-text text-muted small">{{ $book->author }} ({{ $book->published_year }})</p>
-                                
-                                <!-- Affichage de la note moyenne -->
-                                <div class="mb-2">
-                                    <div class="star-rating">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            @if($i <= $book->average_rating)
-                                                <i class="fas fa-star text-warning"></i>
-                                            @elseif($i == ceil($book->average_rating) && $book->average_rating - floor($book->average_rating) > 0)
-                                                <i class="fas fa-star-half-alt text-warning"></i>
-                                            @else
-                                                <i class="far fa-star text-warning"></i>
-                                            @endif
-                                        @endfor
-                                        <span class="ms-1">({{ $book->reviews_count }} avis)</span>
+                        <div class="card h-100 shadow-sm">
+                            <div class="position-relative">
+                                <img src="{{ $book->cover_url }}" class="card-img-top" alt="{{ $book->title }}" style="height: 200px; object-fit: cover;">
+                                @if($book->average_rating)
+                                    <div class="position-absolute top-0 end-0 bg-warning text-white px-2 py-1 m-2 rounded">
+                                        {{ number_format($book->average_rating, 1) }} <i class="fas fa-star"></i>
                                     </div>
-                                </div>
-                                
-                                <p class="card-text">{{ Str::limit($book->description, 100) }}</p>
+                                @endif
                             </div>
-                            <div class="card-footer bg-white d-flex justify-content-between">
-                                <a href="{{ route('books.show', $book) }}" class="btn btn-primary btn-sm">
-                                    Détails
+                            <div class="card-body">
+                                <h5 class="card-title"> Titre : </h5>{{ $book->title }}
+                                <p class="card-subtitle mb-2 text-muted small"> Author </p>{{ $book->author }}
+                                <p class="card-text text-muted small mb-2">
+                                    <i class="fas fa-calendar-alt"> <h5>date  de sorti   ;</h5></i> {{ $book->published_at }}
+                                    @if($book->category)
+                                        <span class="mx-2">|</span>
+                                        <i class="fas fa-tag"></i> <h5>Category  </h5>{{ $book->category->name }}
+                                    @endif
+                                </p>
+                                
+                               @php
+    $rating = $book->averageRating(); // Call the method properly
+    $reviewsCount = $book->reviews()->count(); // Make sure you count reviews
+@endphp
+
+<div class="mb-3">
+    <div class="star-rating d-inline-block">
+        @for($i = 1; $i <= 5; $i++)
+            @if($i <= floor($rating))
+                <i class="fas fa-star text-warning"></i>
+            @elseif($i == ceil($rating) && $rating - floor($rating) > 0)
+                <i class="fas fa-star-half-alt text-warning"></i>
+            @else
+                <i class="far fa-star text-warning"></i>
+            @endif
+        @endfor
+    </div>
+    <span class="text-muted small ms-1">({{ $reviewsCount }} avis)</span>
+</div>
+
+                                
+                                <p class="card-text text-truncate" style="max-height: 3.6em;">{{ $book->description }}</p>
+                            </div>
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <a href="{{ route('user.show', $book) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-info-circle"></i> Détails
                                 </a>
                                 @auth
                                     @if(!$book->has_user_review)
-                                        <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $book->id }}">
-                                            Noter
+                                        <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#reviewModal{{ $book->id }}">
+                                            <i class="fas fa-star"></i> Noter
                                         </button>
                                     @endif
                                 @endauth
@@ -116,36 +135,49 @@
                         </div>
                     </div>
 
-                    <!-- Modal pour les avis -->
+                    <!-- Review Modal -->
                     @auth
                         @if(!$book->has_user_review)
                             <div class="modal fade" id="reviewModal{{ $book->id }}" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Donnez votre avis</h5>
+                                        <div class="modal-header bg-light">
+                                            <h5 class="modal-title">Votre avis sur "{{ $book->title }}"</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <form action="{{ route('books.reviews.store', $book) }}" method="POST">
+                                        <form action="{{ route('user.books.reviews.store', $book) }}" method="POST">
                                             @csrf
                                             <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Note</label>
+                                                <div class="mb-4">
+                                                    <label class="form-label fw-bold">Note</label>
                                                     <div class="rating">
-                                                        @for($i = 5; $i >= 1; $i--)
-                                                            <input type="radio" id="star{{ $i }}-{{ $book->id }}" name="rating" value="{{ $i }}" required>
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            <input type="radio" id="star{{ $i }}-{{ $book->id }}" 
+                                                                   name="rating" value="{{ $i }}"
+                                                                   {{ old('rating') == $i ? 'checked' : '' }} required>
                                                             <label for="star{{ $i }}-{{ $book->id }}"><i class="fas fa-star"></i></label>
                                                         @endfor
                                                     </div>
+                                                    @error('rating')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="comment-{{ $book->id }}" class="form-label">Commentaire (optionnel, max 500 caractères)</label>
-                                                    <textarea class="form-control" id="comment-{{ $book->id }}" name="comment" rows="3" maxlength="500"></textarea>
+                                                    <label for="comment-{{ $book->id }}" class="form-label fw-bold">Commentaire (optionnel)</label>
+                                                    <textarea class="form-control" id="comment-{{ $book->id }}" 
+                                                              name="comment" rows="4" maxlength="500"
+                                                              placeholder="Dites-nous ce que vous avez pensé de ce livre...">{{ old('comment') }}</textarea>
+                                                    @error('comment')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+                                                    <div class="form-text small text-end">500 caractères maximum</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                <button type="submit" class="btn btn-primary">Envoyer</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-paper-plane me-1"></i> Envoyer
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -157,7 +189,7 @@
             </div>
 
             <!-- Pagination -->
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center mt-4">
                 {{ $books->links() }}
             </div>
         </div>
@@ -168,8 +200,8 @@
 <style>
     .rating {
         display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
+        justify-content: flex-start;
+        gap: 5px;
     }
     .rating input {
         display: none;
@@ -178,15 +210,28 @@
         cursor: pointer;
         font-size: 1.5rem;
         color: #ddd;
-        padding: 0 2px;
+        transition: color 0.2s;
     }
     .rating input:checked ~ label,
     .rating label:hover,
-    .rating label:hover ~ label {
+    .rating input:hover ~ label {
         color: #ffc107;
     }
     .star-rating {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 </style>
 @endpush

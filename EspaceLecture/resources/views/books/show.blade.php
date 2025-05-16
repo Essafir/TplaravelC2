@@ -37,7 +37,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <strong>Date de publication:</strong> {{ $book->published_at->format('d/m/Y') }}
+                        <strong>Date de publication:</strong> {{ $book->published_at instanceof \Carbon\Carbon ? $book->published_at->format('d/m/Y') : date('d/m/Y', strtotime($book->published_at)) }}
+
                     </div>
 
                     <div class="mb-3">
@@ -56,42 +57,7 @@
                 <div class="card-header">
                     <h3 class="mb-0">Avis des lecteurs</h3>
                 </div>
-                <div class="card-body">
-                    @auth
-                        @if(!$userReview)
-                            <!-- Add Review Form -->
-                            <div class="mb-4">
-                                <h5>Donnez votre avis</h5>
-                                <form action="{{ route('reviews.store') }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="book_id" value="{{ $book->id }}">
-
-                                    <div class="mb-3">
-                                        <label for="rating" class="form-label">Note</label>
-                                        <select name="rating" id="rating" class="form-select" required>
-                                            <option value="">Sélectionnez une note</option>
-                                            <option value="5">5 - Excellent</option>
-                                            <option value="4">4 - Très bon</option>
-                                            <option value="3">3 - Bon</option>
-                                            <option value="2">2 - Moyen</option>
-                                            <option value="1">1 - Mauvais</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="comment" class="form-label">Commentaire (optionnel)</label>
-                                        <textarea name="comment" id="comment" rows="3" class="form-control" maxlength="1000"></textarea>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-primary">Envoyer l'avis</button>
-                                </form>
-                            </div>
-                        @endif
-                    @else
-                        <div class="alert alert-info">
-                            <a href="{{ route('login') }}">Connectez-vous</a> pour laisser un avis sur ce livre.
-                        </div>
-                    @endauth
+                
 
                     <!-- Reviews List -->
                     <div class="reviews-list">

@@ -27,14 +27,6 @@ Route::get('/about', function () {
     return view('pages.about');
 })->name('about');
 
-// Routes pour les avis (accessibles aux utilisateurs connectés)
-Route::middleware('auth')->group(function () {
-    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])
-        ->name('books.reviews.store');
-    
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
-        ->name('reviews.destroy');
-});
 
 // User routes (utilisateurs avec rôle 'user')
 Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':user'])->group(function () {
@@ -44,6 +36,8 @@ Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':u
     Route::get('profile', [ProfileController::class, 'show'])->name('profile');
     Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('advanced-search', [Userbookcontrole::class, 'advancedSearch'])->name('advanced-search');
+    Route::post('books/{book}/reviews', [ReviewController::class, 'store'])->name('books.reviews.store');
+    Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 // Admin routes (utilisateurs avec rôle 'admin')

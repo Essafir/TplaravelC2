@@ -36,4 +36,12 @@ class Book extends Model
     {
         return $this->reviews()->avg('rating') ?? 0;
     }
+    public function getHasUserReviewAttribute()
+{
+    if (!auth()->check()) {
+        return false;
+    }
+    
+    return $this->reviews->contains('user_id', auth()->id());
+}
 }
