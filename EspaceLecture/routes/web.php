@@ -50,6 +50,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'books.destroy'
     ]);
  
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create'); // Ajouté pour cohérence
+        Route::post('/', [UserController::class, 'store'])->name('store'); // Ajouté pour cohérence
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy'); // Ajouté pour cohérence
+        Route::post('/{user}/ban', [UserController::class, 'ban'])->name('ban');
+        Route::post('/{user}/unban', [UserController::class, 'unban'])->name('unban');
+    });
     Route::resource('categories', CategoryController::class)->names([
         'index' => 'categories.index',
         'create' => 'categories.create',

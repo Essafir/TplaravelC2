@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+use Illuminate\Support\Facades\Hash;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,6 +14,33 @@ class UserController extends Controller
         $users = User::where('id', '!=', auth()->id())->paginate(10);
         return view('admin.users.index', compact('users'));
     }
+
+    // Dans app/Http/Controllers/Admin/UserController.php
+
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'role' => 'required|in:user,admin',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'role' => $validated['role'],
+        'password' => Hash::make($validated['password']),
+    ]);
+
+    return redirect()->route('admin.users.index')
+           ->with('success', 'Utilisateur créé avec succès');
+}
 
     public function edit(User $user)
     {
@@ -55,5 +83,18 @@ class UserController extends Controller
     {
         $user->update(['banned_at' => null]);
         return back()->with('success', 'Utilisateur débanni');
+    }
+    public function destroy(User $user)
+    {
+        // Empêche la suppression de l'utilisateur connecté
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Vous ne pouvez pas supprimer votre propre compte !');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Utilisateur supprimé avec succès');
     }
 }
