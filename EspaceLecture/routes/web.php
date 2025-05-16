@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController1;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CategoryController;
 
@@ -22,10 +23,14 @@ use App\Http\Middleware\CheckRole;
 */
 
 // Public route
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', [BookController1::class, 'welcome'])->name('welcome');
+Route::get('/books', [BookController1::class, 'index'])->name('books.index');
+Route::get('/books/{book}', [BookController1::class, 'show'])->name('books.show');
+Route::get('/search', [BookController1::class, 'search'])->name('books.search');
+Route::get('/advanced-search', [BookController1::class, 'advancedSearch'])->name('books.advanced-search');
+Route::get('/about', function () {
+    return view('pages.about');
+})->name('about');
 // Authentication routes (Breeze)
 require __DIR__.'/auth.php';
 
@@ -45,7 +50,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'books.destroy'
     ]);
  
-
     Route::resource('categories', CategoryController::class)->names([
         'index' => 'categories.index',
         'create' => 'categories.create',
@@ -63,16 +67,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
     // Routes pour bannir/débannir
         Route::post('/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
         Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
-    // Categories (uncomment if you have a CategoryController)
-    // Route::resource('categories', CategoryController::class)->names([
-    //     'index' => 'categories.index',
-    //     'create' => 'categories.create',
-    //     'store' => 'categories.store',
-    //     'show' => 'categories.show',
-    //     'edit' => 'categories.edit',
-    //     'update' => 'categories.update',
-    //     'destroy' => 'categories.destroy'
-    // ]);
 
 });
 
