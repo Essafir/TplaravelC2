@@ -1,8 +1,9 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\CategoryController;
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Uncomment and create these controllers if you want to use them
 // use App\Http\Controllers\Admin\CategoryController;
@@ -44,19 +45,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'books.destroy'
     ]);
 
-    // Categories (uncomment if you have a CategoryController)
-    // Route::resource('categories', CategoryController::class)->names([
-    //     'index' => 'categories.index',
-    //     'create' => 'categories.create',
-    //     'store' => 'categories.store',
-    //     'show' => 'categories.show',
-    //     'edit' => 'categories.edit',
-    //     'update' => 'categories.update',
-    //     'destroy' => 'categories.destroy'
-    // ]);
+    Route::resource('categories', CategoryController::class)->names([
+        'index' => 'categories.index',
+        'create' => 'categories.create',
+        'store' => 'categories.store',
+        'show' => 'categories.show',
+        'edit' => 'categories.edit',
+        'update' => 'categories.update',
+        'destroy' => 'categories.destroy'
+    ]);
 
-    // Users (uncomment if you have a UserController)
-    // Route::get('users', [UserController::class, 'index'])->name('users.index');
 });
 
 // Common authenticated routes (for all logged-in users)

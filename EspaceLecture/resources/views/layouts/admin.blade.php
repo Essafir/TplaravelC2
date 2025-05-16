@@ -18,6 +18,9 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item{{ request()->routeIs('admin.books.*') ? ' active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.books.index') }}">Books</a>
+                    <a class="nav-link" href="{{ route('admin.categories.index') }}">categories</a>
+                    <a class="nav-link" href="{{ route('admin.users.index') }}">utilisateur</a>
+
                 </li>
                 <!-- Add more admin links here -->
             </ul>
