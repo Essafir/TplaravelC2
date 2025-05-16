@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController1;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Userbookcontrole;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 // Uncomment and create these controllers if you want to use them
@@ -22,6 +24,19 @@ use App\Http\Middleware\CheckRole;
 |
 */
 
+// Public routes (accessible without authentication)
+Route::get('/', [BookController1::class, 'welcome'])->name('welcome');
+
+// Authenticated user routes
+Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':user'])->group(function () {
+    Route::get('books', [Userbookcontrole::class, 'index'])->name('index'); // This will be 'user.books' as name and '/user/books' as path
+    Route::get('books/{book}', [Userbookcontrole::class, 'show'])->name('show');
+    Route::get('search', [Userbookcontrole::class, 'search'])->name('search');
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('advanced-search', [Userbookcontrole::class, 'advancedSearch'])->name('advanced-search');
+});
 // Public route
 Route::get('/', [BookController1::class, 'welcome'])->name('welcome');
 Route::get('/books', [BookController1::class, 'index'])->name('books.index');
@@ -71,14 +86,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'categories.destroy'
     ]);
     // Routes pour la gestion des utilisateurs
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-    
-    // Routes pour bannir/débannir
-        Route::post('/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
-        Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
-
+  
 });
 
 // Common authenticated routes (for all logged-in users)

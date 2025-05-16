@@ -6,7 +6,7 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
-class BookController1 extends Controller
+class Userbookcontrole extends Controller
 {
     public function welcome()
     {
@@ -67,7 +67,7 @@ class BookController1 extends Controller
             ->orderBy('year', 'desc')
             ->pluck('year');
 
-        return view('books.index', compact('books', 'categories', 'years'));
+        return view('user.index', compact('books', 'categories', 'years'));
     }
 
     public function show(Book $book)
@@ -81,7 +81,7 @@ class BookController1 extends Controller
                 ->first();
         }
 
-        return view('books.show', compact('book', 'userReview'));
+        return view('user.show', compact('book', 'userReview'));
     }
 
     public function search(Request $request)
@@ -161,6 +161,6 @@ class BookController1 extends Controller
     public function advancedSearch()
     {
         $categories = Category::all();
-        return view('books.advanced-search', compact('categories'));
+        return view('user.advanced-search', compact('categories'));
     }
 }

@@ -35,4 +35,5 @@ class ReviewController extends Controller
 
         return back()->with('success', 'Votre avis a été enregistré avec succès.');
     }
+    
 }
