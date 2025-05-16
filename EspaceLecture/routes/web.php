@@ -45,14 +45,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
     ]);
  
 
-    // Routes pour la gestion des utilisateurs
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
-    
-    // Routes pour bannir/débannir
-        Route::post('/users/{user}/ban', [UserController::class, 'ban'])->name('admin.users.ban');
-        Route::post('/users/{user}/unban', [UserController::class, 'unban'])->name('admin.users.unban');
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create'); // Ajouté pour cohérence
+        Route::post('/', [UserController::class, 'store'])->name('store'); // Ajouté pour cohérence
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy'); // Ajouté pour cohérence
+        Route::post('/{user}/ban', [UserController::class, 'ban'])->name('ban');
+        Route::post('/{user}/unban', [UserController::class, 'unban'])->name('unban');
+    });
     // Categories (uncomment if you have a CategoryController)
     // Route::resource('categories', CategoryController::class)->names([
     //     'index' => 'categories.index',

@@ -9,66 +9,94 @@
             <h6 class="m-0 font-weight-bold text-primary">Modifier l'utilisateur : {{ $user->name }}</h6>
         </div>
         <div class="card-body">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 
-                <div class="form-group">
-                    <label for="name">Nom</label>
-                    <input type="text" class="form-control" id="name" name="name" 
-                           value="{{ old('name', $user->name) }}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" 
-                           value="{{ old('email', $user->email) }}" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="role">Rôle</label>
-                    <select class="form-control" id="role" name="role" required>
-                        <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>Utilisateur</option>
-                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Administrateur</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="change_password" name="change_password">
-                        <label class="form-check-label" for="change_password">
-                            Modifier le mot de passe
-                        </label>
-                    </div>
-                </div>
-                
-                <div id="password_fields" style="display: none;">
-                    <div class="form-group">
-                        <label for="password">Nouveau mot de passe</label>
-                        <input type="password" class="form-control" id="password" name="password">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Nom complet *</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                   id="name" name="name" value="{{ old('name', $user->name) }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="password_confirmation">Confirmer le mot de passe</label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                   id="email" name="email" value="{{ old('email', $user->email) }}" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
                 
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Annuler</a>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="role">Rôle *</label>
+                            <select class="form-control @error('role') is-invalid @enderror" 
+                                    id="role" name="role" required>
+                                <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Utilisateur</option>
+                                <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Administrateur</option>
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    
+
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="password">Nouveau mot de passe</label>
+                            <input type="text" class="form-control @error('password') is-invalid @enderror" 
+                                   id="password" name="password" placeholder="Laisser vide pour ne pas modifier">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="password_confirmation">Confirmer le mot de passe</label>
+                            <input type="text" class="form-control" 
+                                   id="password_confirmation" name="password_confirmation" placeholder="Confirmer le nouveau mot de passe">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Mettre à jour
+                    </button>
+                    
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-<script>
-    // Afficher/masquer les champs mot de passe
-    document.getElementById('change_password').addEventListener('change', function() {
-        document.getElementById('password_fields').style.display = this.checked ? 'block' : 'none';
-    });
-</script>
 @endsection
