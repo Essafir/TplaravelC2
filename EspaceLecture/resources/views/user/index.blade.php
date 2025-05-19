@@ -80,43 +80,44 @@
                         <div class="card h-100 shadow-sm">
                             <div class="position-relative">
                                 <img src="{{ $book->cover_url }}" class="card-img-top" alt="{{ $book->title }}" style="height: 200px; object-fit: cover;">
-                                @if($book->average_rating)
+                                @if($book->reviews_avg_rating)
                                     <div class="position-absolute top-0 end-0 bg-warning text-white px-2 py-1 m-2 rounded">
-                                        {{ number_format($book->average_rating, 1) }} <i class="fas fa-star"></i>
+                                        {{ number_format($book->reviews_avg_rating, 1) }} <i class="fas fa-star"></i>
                                     </div>
                                 @endif
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title"> Titre : </h5>{{ $book->title }}
-                                <p class="card-subtitle mb-2 text-muted small"> Author </p>{{ $book->author }}
+                                <h5 class="card-title">{{ $book->title }}</h5>
+                                <p class="card-subtitle mb-2 text-muted small">{{ $book->author }}</p>
                                 <p class="card-text text-muted small mb-2">
-                                    <i class="fas fa-calendar-alt"> <h5>date  de sorti   ;</h5></i> {{ $book->published_at }}
+                                    <i class="fas fa-calendar-alt"></i> {{ $book->published_at instanceof \Carbon\Carbon ? $book->published_at->format('d/m/Y') : date('d/m/Y', strtotime($book->published_at)) }} 
                                     @if($book->category)
                                         <span class="mx-2">|</span>
-                                        <i class="fas fa-tag"></i> <h5>Category  </h5>{{ $book->category->name }}
+                                        <i class="fas fa-tag"></i> {{ $book->category->name }}
                                     @endif
                                 </p>
                                 
-                               @php
-    $rating = $book->averageRating(); // Call the method properly
-    $reviewsCount = $book->reviews()->count(); // Make sure you count reviews
-@endphp
-
-<div class="mb-3">
-    <div class="star-rating d-inline-block">
-        @for($i = 1; $i <= 5; $i++)
-            @if($i <= floor($rating))
-                <i class="fas fa-star text-warning"></i>
-            @elseif($i == ceil($rating) && $rating - floor($rating) > 0)
-                <i class="fas fa-star-half-alt text-warning"></i>
-            @else
-                <i class="far fa-star text-warning"></i>
-            @endif
-        @endfor
-    </div>
-    <span class="text-muted small ms-1">({{ $reviewsCount }} avis)</span>
-</div>
-
+                                <!-- Rating Display -->
+                                <div class="mb-3">
+                                    @if($book->reviews_count > 0)
+                                        <div class="star-rating d-inline-block">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= floor($book->reviews_avg_rating))
+                                                    <i class="fas fa-star text-warning"></i>
+                                                @elseif($i == ceil($book->reviews_avg_rating) && ($book->reviews_avg_rating - floor($book->reviews_avg_rating)) >= 0.5)
+                                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                                @else
+                                                    <i class="far fa-star text-warning"></i>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                        <span class="text-muted small ms-1">
+                                            ({{ $book->reviews_count }} avis)
+                                        </span>
+                                    @else
+                                        <span class="text-muted small">Pas encore noté</span>
+                                    @endif
+                                </div>
                                 
                                 <p class="card-text text-truncate" style="max-height: 3.6em;">{{ $book->description }}</p>
                             </div>
@@ -167,9 +168,7 @@
                                                     <textarea class="form-control" id="comment-{{ $book->id }}" 
                                                               name="comment" rows="4" maxlength="500"
                                                               placeholder="Dites-nous ce que vous avez pensé de ce livre...">{{ old('comment') }}</textarea>
-                                                    @error('comment')
-                                                        <span class="text-danger small">{{ $message }}</span>
-                                                    @enderror
+
                                                     <div class="form-text small text-end">500 caractères maximum</div>
                                                 </div>
                                             </div>

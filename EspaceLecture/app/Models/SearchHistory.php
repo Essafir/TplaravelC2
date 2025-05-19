@@ -13,6 +13,7 @@ class SearchHistory extends Model
         'user_id',
         'query',
     ];
+    public $timestamps = false;
 
     public function user()
     {

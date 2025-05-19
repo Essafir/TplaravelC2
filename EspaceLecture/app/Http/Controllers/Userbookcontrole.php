@@ -9,67 +9,66 @@ use Illuminate\Http\Request;
 class Userbookcontrole extends Controller
 {
     public function welcome()
-    {
-        $recentBooks = Book::with('category')
-            ->orderBy('published_at', 'desc')
-            ->take(8)
-            ->get();
+        {
+            $recentBooks = Book::with('category')
+                ->withAvg('reviews', 'rating')
+                ->orderBy('published_at', 'desc')
+                ->take(8)
+                ->get();
 
-        $popularBooks = Book::with('category')
-            ->withCount('reviews')
-            ->orderBy('reviews_count', 'desc')
-            ->take(8)
-            ->get();
+            $popularBooks = Book::with('category')
+                ->withCount('reviews')
+                ->withAvg('reviews', 'rating')
+                ->orderBy('reviews_count', 'desc')
+                ->take(8)
+                ->get();
 
-        return view('welcome', compact('recentBooks', 'popularBooks'));
-    }
-
+            return view('user.welcomeuser', compact('recentBooks', 'popularBooks'));
+        }
     public function index(Request $request)
-    {
-        $query = Book::query()->with('category', 'reviews');
+{
+    $query = Book::query()
+        ->with(['category', 'reviews'])
+        ->withAvg('reviews', 'rating') // Add average rating
+        ->withCount('reviews'); // Add review count
 
-        // Apply filters
-        if ($request->has('category') && $request->category) {
-            $query->where('category_id', $request->category);
-        }
-
-        if ($request->has('year') && $request->year) {
-            $query->whereYear('published_at', $request->year);
-        }
-
-        if ($request->has('rating') && $request->rating) {
-            $query->whereHas('reviews', function($q) use ($request) {
-                $q->selectRaw('avg(rating) as avg_rating, book_id')
-                  ->groupBy('book_id')
-                  ->having('avg_rating', '>=', $request->rating);
-            });
-        }
-
-        // Apply sorting
-        switch ($request->sort) {
-            case 'recent':
-                $query->orderBy('published_at', 'desc');
-                break;
-            case 'popular':
-                $query->withCount('reviews')->orderBy('reviews_count', 'desc');
-                break;
-            case 'rating':
-                $query->withAvg('reviews', 'rating')->orderBy('reviews_avg_rating', 'desc');
-                break;
-            default:
-                $query->orderBy('title');
-        }
-
-        $books = $query->paginate(12);
-        $categories = Category::all();
-        $years = Book::selectRaw('YEAR(published_at) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
-
-        return view('user.index', compact('books', 'categories', 'years'));
+    // Apply filters
+    if ($request->has('category') && $request->category) {
+        $query->where('category_id', $request->category);
     }
 
+    if ($request->has('year') && $request->year) {
+        $query->whereYear('published_at', $request->year);
+    }
+
+    if ($request->has('rating') && $request->rating) {
+        $query->having('reviews_avg_rating', '>=', $request->rating);
+    }
+
+    // Apply sorting
+    switch ($request->sort) {
+        case 'recent':
+            $query->orderBy('published_at', 'desc');
+            break;
+        case 'popular':
+            $query->orderBy('reviews_count', 'desc');
+            break;
+        case 'rating':
+            $query->orderBy('reviews_avg_rating', 'desc');
+            break;
+        default:
+            $query->orderBy('title');
+    }
+
+    $books = $query->paginate(12);
+    $categories = Category::all();
+    $years = Book::selectRaw('YEAR(published_at) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+
+    return view('user.index', compact('books', 'categories', 'years'));
+}
     public function show(Book $book)
     {
         $book->load('category', 'reviews.user');
@@ -151,9 +150,9 @@ class Userbookcontrole extends Controller
     $books = $query->paginate(12)->appends($request->query());
     $categories = Category::all();
 
-    return view('books.search-results', [
+    return view('user.user_search-results', [
         'books' => $books,
-        'categories' => $categories,
+        'categories' => $categories, 
         'searchParams' => $request->all()
     ]);
 }

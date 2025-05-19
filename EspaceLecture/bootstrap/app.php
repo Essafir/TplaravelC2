@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'track.search' => \App\Http\Middleware\TrackSearchHistory::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

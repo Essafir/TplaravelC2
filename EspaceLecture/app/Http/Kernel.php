@@ -71,6 +71,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
     // ... other middleware
     'role' => \App\Http\Middleware\CheckRole::class,
+    'track.search' => \App\Http\Middleware\TrackSearchHistory::class,
+
 ];
 
 }

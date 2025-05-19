@@ -70,6 +70,51 @@
                     {{ $reviews->links() }}
                 </div>
             </div>
+            <div class="card mt-4">
+    <div class="card-header">
+        <h3>Historique de Recherche ({{ $searchHistory->total() }})</h3>
+    </div>
+    <div class="card-body">
+        @if($searchHistory->isEmpty())
+            <p class="text-muted">Aucun historique de recherche trouvé.</p>
+        @else
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Recherche</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($searchHistory as $history)
+                            <tr>
+                                <td>
+                                    <a href="{{ route('user.searchuser', ['query' => $history->query]) }}">
+                                        {{ $history->query }}
+                                    </a>
+                                </td>search
+                                    <td>
+                                        {{ $history->searched_at instanceof \Carbon\Carbon ? $history->searched_at->format('d/m/Y H:i') : date('d/m/Y H:i', strtotime($history->searched_at)) }}
+                                    </td>                                <td>
+                                    <form action="{{ route('user.search-history.destroy', $history) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"  onclick="return confirm('Supprimer cette entrée?')">
+                                            supprimée
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{ $searchHistory->links() }}
+        @endif
+    </div>
+</div>
         </div>
     </div>
 </div>

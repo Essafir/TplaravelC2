@@ -29,12 +29,14 @@ Route::get('/about', function () {
 
 
 // User routes (utilisateurs avec rôle 'user')
-Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':user'])->group(function () {
+Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':user','track.search'])->group(function () {
+    Route::get('/', [Userbookcontrole::class, 'welcome'])->name('welcomeuser');
     Route::get('books', [Userbookcontrole::class, 'index'])->name('index');
     Route::get('books/{book}', [Userbookcontrole::class, 'show'])->name('show');
-    Route::get('search', [Userbookcontrole::class, 'search'])->name('search');
+    Route::get('search', [Userbookcontrole::class, 'search'])->name('searchuser');
     Route::get('profile', [ProfileController::class, 'show'])->name('profile');
     Route::put('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('search-history/{history}', [ProfileController::class, 'deleteSearchHistory'])->name('search-history.destroy');
     Route::get('advanced-search', [Userbookcontrole::class, 'advancedSearch'])->name('advanced-search');
     Route::post('books/{book}/reviews', [ReviewController::class, 'store'])->name('books.reviews.store');
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');

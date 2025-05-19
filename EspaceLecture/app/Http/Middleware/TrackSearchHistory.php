@@ -10,21 +10,21 @@ use Illuminate\Support\Facades\Auth;
 class TrackSearchHistory
 {
     public function handle(Request $request, Closure $next)
-    {
-        $response = $next($request);
+{
+    $response = $next($request);
 
-        // Only track for authenticated users
-        if (Auth::check() && $request->isMethod('get')) {
-            // Check if this is a search request
-            if ($request->routeIs('books.search') && $request->filled('query')) {
-                SearchHistory::create([
-                    'user_id' => Auth::id(),
-                    'query' => $request->input('query'),
-                    'searched_at' => now()
-                ]);
-            }
+    // Only track for authenticated users
+    if (Auth::check() && $request->isMethod('get')) {
+        // Check if this is a user search request
+        if ($request->routeIs('user.searchuser') && $request->filled('query')) {
+            SearchHistory::create([
+                'user_id' => Auth::id(),
+                'query' => $request->input('query'),
+                'searched_at' => now()
+            ]);
         }
-
-        return $response;
     }
+
+    return $response;
+}
 }

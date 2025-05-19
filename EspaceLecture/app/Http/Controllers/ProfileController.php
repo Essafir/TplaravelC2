@@ -5,23 +5,30 @@ use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\SearchHistory;
 
 class ProfileController extends Controller
 {
     
-    public function show()
-{
-    $user = auth()->user();
-    $reviews = Review::with('book')
-        ->where('user_id', $user->id)
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+     public function show()
+    {
+        $user = auth()->user();
+        
+        $reviews = Review::with('book')
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'reviews_page');
+            
+        $searchHistory = SearchHistory::where('user_id', $user->id)
+            ->orderBy('searched_at', 'desc')
+            ->paginate(10, ['*'], 'history_page');
 
-    return view('user.profile', [
-        'user' => $user,
-        'reviews' => $reviews
-    ]);
-}
+        return view('user.profile', [
+            'user' => $user,
+            'reviews' => $reviews,
+            'searchHistory' => $searchHistory
+        ]);
+    }
 
     public function edit()
     {
@@ -55,6 +62,17 @@ class ProfileController extends Controller
     $user->save();
 
     return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+}
+public function deleteSearchHistory(SearchHistory $history)
+{
+    // Verify the search history belongs to the authenticated user
+    if ($history->user_id !== auth()->id()) {
+        abort(403);
+    }
+
+    $history->delete();
+
+    return back()->with('success', 'Entrée supprimée de votre historique.');
 }
 
     

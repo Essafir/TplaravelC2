@@ -17,6 +17,27 @@
             @include('partials.rating-stars', ['rating' => $book->averageRating()])
             <span class="badge bg-secondary">{{ $book->category->name }}</span>
         </div>
+        <div class="mb-2">
+            @if($book->reviews_count > 0)
+                <div class="star-rating">
+                    @for($i = 1; $i <= 5; $i++) 
+                        @if($i <= floor($book->reviews_avg_rating))
+                            <i class="fas fa-star text-warning"></i>
+                        @elseif($i == ceil($book->reviews_avg_rating) && ($book->reviews_avg_rating - floor($book->reviews_avg_rating)) >= 0.5)
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        @else
+                            <i class="far fa-star text-warning"></i>
+                        @endif
+                    @endfor
+                    <span class="ms-1">
+                        ({{ number_format($book->reviews_avg_rating, 1) }})
+                        <small class="text-muted">({{ $book->reviews_count }} avis)</small>
+                    </span>
+                </div>
+            @else
+                <span class="text-muted">Pas encore noté</span>
+            @endif
+        </div>
     </div>
     <div class="card-footer bg-transparent">
         <small class="text-muted">
