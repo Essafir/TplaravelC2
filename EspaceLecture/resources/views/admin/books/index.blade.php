@@ -46,7 +46,7 @@
                                     <td>{{ $book->category->name ?? 'Uncategorized' }}</td>
                                     <td>
                                         <span class="badge badge-{{ $book->status === 'available' ? 'success' : 'warning' }}">
-                                            {{ ucfirst($book->status) }}
+                                            {{ $book->status }}
                                         </span>
                                     </td>
                                     <td>

@@ -123,7 +123,7 @@
 
 @push('scripts')
     <script>
-        // Update the file input label with the selected file name
+        // changer le texte qui appru dans linput 
         document.querySelector('.custom-file-input').addEventListener('change', function(e) {
             var fileName = e.target.files[0] ? e.target.files[0].name : "Choose file";
             e.target.nextElementSibling.textContent = fileName;

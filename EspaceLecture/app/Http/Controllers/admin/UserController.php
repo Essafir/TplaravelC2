@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::where('id', '!=', auth()->id())->paginate(10);
+        $users = User::where('id', '!=', auth()->id())->paginate(10);//return list des users  sauf user connecté
         return view('admin.users.index', compact('users'));
     }
 

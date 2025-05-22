@@ -47,7 +47,8 @@ class CategoryController extends Controller
     }
 
     public function destroy(Category $category)
-    {
+    {  
+         //verifier si cette catégorie est associé a un book
         if ($category->books()->count() > 0) {
             return back()->with('error', 'Cannot delete category with associated books!');
         }

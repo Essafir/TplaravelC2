@@ -11,11 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Middleware\CheckRole;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+
 
 // Public routes
 Route::get('/', [BookController1::class, 'welcome'])->name('welcome');
@@ -28,7 +24,7 @@ Route::get('/about', function () {
 })->name('about');
 
 
-// User routes (utilisateurs avec rôle 'user')
+// User routes client
 Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':user','track.search'])->group(function () {
     Route::get('/', [Userbookcontrole::class, 'welcome'])->name('welcomeuser');
     Route::get('books', [Userbookcontrole::class, 'index'])->name('index');
@@ -42,12 +38,12 @@ Route::prefix('user')->name('user.')->middleware(['auth', CheckRole::class . ':u
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
-// Admin routes (utilisateurs avec rôle 'admin')
+// Admin routes 
 Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . ':admin'])->group(function () {
-    // Dashboard
+   
     Route::get('/', [BookController::class, 'dashboard'])->name('dashboard');
 
-    // Books CRUD
+    
     Route::resource('books', BookController::class)->names([
         'index' => 'books.index',
         'create' => 'books.create',
@@ -58,7 +54,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'books.destroy'
     ]);
 
-    // Users management
+    
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create'); 
@@ -70,7 +66,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         Route::post('/{user}/unban', [UserController::class, 'unban'])->name('unban');
     });
 
-    // Categories management
+    
     Route::resource('categories', CategoryController::class)->names([
         'index' => 'categories.index',
         'create' => 'categories.create',
@@ -81,12 +77,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'destroy' => 'categories.destroy'
     ]);
 
-    // Reviews management (optionnel - si vous voulez que l'admin puisse gérer les avis)
-    Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
-    Route::delete('reviews/{review}', [ReviewController::class, 'adminDestroy'])->name('reviews.adminDestroy');
+    ;
 });
 
-// Authentication routes
+// Auth routes
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function () {

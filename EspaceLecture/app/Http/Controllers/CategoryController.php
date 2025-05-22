@@ -6,7 +6,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
-{
+{    
+    //verifier que ce utilisateur est un admin
     public function __construct()
     {
         $this->middleware('admin');

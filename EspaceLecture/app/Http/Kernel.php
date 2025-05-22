@@ -69,7 +69,7 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\AdminMiddleware::class, // Ajoutez cette ligne
     ];
     protected $routeMiddleware = [
-    // ... other middleware
+    
     'role' => \App\Http\Middleware\CheckRole::class,
     'track.search' => \App\Http\Middleware\TrackSearchHistory::class,
 

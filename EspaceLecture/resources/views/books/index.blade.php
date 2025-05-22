@@ -35,7 +35,6 @@
                             </select>
                         </div>
 
-                        <!-- Rating Filter -->
                         <div class="mb-3">
                             <label for="rating" class="form-label">Note minimale</label>
                             <select name="rating" id="rating" class="form-select">
@@ -79,7 +78,7 @@
                 @endforeach
             </div>
 
-            <!-- Pagination -->
+            
             <div class="d-flex justify-content-center">
                 {{ $books->links() }}
             </div>

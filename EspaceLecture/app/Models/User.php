@@ -46,10 +46,10 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
-
+    
     public function isBanned()
     {
-        return !is_null($this->banned_at);
+        return !is_null($this->banned_at);//return true si le champ banned_at est not null
     }
 
 }

@@ -39,18 +39,18 @@ class ProfileController extends Controller
 {
     $user = auth()->user();
 
-    // ✅ Validation
+    
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email,' . $user->id, // exclude current user
+        'email' => 'required|email|unique:users,email,' . $user->id, 
         'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ]);
 
-    // ✅ Update fields
+   
     $user->name = $request->name;
     $user->email = $request->email;
 
-    // ✅ Avatar upload (same as before)
+    
     if ($request->hasFile('avatar')) {
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
@@ -65,7 +65,7 @@ class ProfileController extends Controller
 }
 public function deleteSearchHistory(SearchHistory $history)
 {
-    // Verify the search history belongs to the authenticated user
+    
     if ($history->user_id !== auth()->id()) {
         abort(403);
     }

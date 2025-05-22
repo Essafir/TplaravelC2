@@ -13,9 +13,7 @@ class TrackSearchHistory
 {
     $response = $next($request);
 
-    // Only track for authenticated users
     if (Auth::check() && $request->isMethod('get')) {
-        // Check if this is a user search request
         if ($request->routeIs('user.searchuser') && $request->filled('query')) {
             SearchHistory::create([
                 'user_id' => Auth::id(),

@@ -16,7 +16,7 @@ class ReviewController extends Controller
         'comment' => 'nullable|string|max:1000',
     ]);
 
-    // Check if user already reviewed this book
+    // verifier que luser na pa donner un revie pour ce book
     $existingReview = Review::where('user_id', Auth::id())
         ->where('book_id', $book->id)
         ->first();
@@ -33,29 +33,10 @@ class ReviewController extends Controller
     ]);
 
     return back()->with('success', 'Votre avis a été enregistré avec succès.');
-}    public function destroy(Review $review)
-    {
-        // Seul l'auteur de l'avis ou un admin peut le supprimer
-        if ($review->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
-            abort(403);
-        }
+} 
 
-        $review->delete();
+    
 
-        return back()->with('success', 'Avis supprimé avec succès');
-    }
-
-    // Pour l'admin
-    public function index()
-    {
-        $reviews = Review::with(['user', 'book'])->latest()->paginate(20);
-        return view('admin.reviews.index', compact('reviews'));
-    }
-
-    public function adminDestroy(Review $review)
-    {
-        $review->delete();
-        return back()->with('success', 'Avis supprimé avec succès');
-    }
+    
     
 }

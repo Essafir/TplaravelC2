@@ -15,27 +15,27 @@ class BookController extends Controller
 {
 
 
-public function dashboard()
-{
-    $stats = [];
+    public function dashboard()
+    {
+        $stats = [];
 
-    // 1. Statistiques simples
-    $stats['totalBooks'] = Book::count();
-    $stats['totalUsers'] = User::count();
-    $stats['totalCategories'] = Category::count();
+        
+        $stats['totalBooks'] = Book::count();
+        $stats['totalUsers'] = User::count();
+        $stats['totalCategories'] = Category::count();
 
-    // 2. Derniers livres ajoutés
-    $stats['recentBooks'] = Book::latest()->take(5)->get();
+        //  5 derniers livres ajoutés
+        $stats['recentBooks'] = Book::latest()->take(5)->get();
 
-    // 3. Livres les mieux notés
-    $stats['topRatedBooks'] = Book::withCount('reviews')
-        ->withAvg('reviews', 'rating')
-        ->orderByDesc('reviews_avg_rating')
-        ->take(5)
-        ->get();
+        //Livres les mieux notés
+        $stats['topRatedBooks'] = Book::withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->orderByDesc('reviews_avg_rating')
+            ->take(5)
+            ->get();
 
-    return view('admin.dashboard', compact('stats'));
-}
+        return view('admin.dashboard', compact('stats'));
+    }
 
     public function index()
     {
@@ -96,7 +96,7 @@ public function dashboard()
         ]);
 
         if ($request->hasFile('cover')) {
-            // Delete old cover if exists
+            // supprimer le cover anciene 
             if ($book->cover) {
                 Storage::disk('public')->delete($book->cover);
             }
@@ -109,7 +109,7 @@ public function dashboard()
     }
 
     public function destroy(Book $book)
-    {
+    {    
         if ($book->cover) {
             Storage::disk('public')->delete($book->cover);
         }

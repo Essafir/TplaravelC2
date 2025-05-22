@@ -42,7 +42,7 @@
                             <td>{{ $user->email }}</td>
                             <td>
                                 <span class="badge {{ $user->role === 'admin' ? 'badge-primary' : 'badge-secondary' }}">
-                                    {{ ucfirst($user->role) }}
+                                    {{ $user->role }}
                                 </span>
                             </td>
                             <td>
