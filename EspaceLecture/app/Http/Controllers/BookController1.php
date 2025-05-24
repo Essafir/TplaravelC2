@@ -81,12 +81,22 @@ class BookController1 extends Controller
                 ->first();
         }
 
+        
+
+
         return view('books.show', compact('book', 'userReview'));
     }
 
     public function search(Request $request)
     {
         $query = Book::query()->with(['category', 'reviews']);
+
+        if(auth()->check()) {
+        SearchHistory::create([
+            'user_id' => auth()->id(),
+            'query' => $query,
+        ]);
+    }
 
         // recherche par auteur ou titre ou un mot/phrse dans le résumé
         if ($request->filled('query')) {

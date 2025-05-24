@@ -32,6 +32,12 @@
                     </form>
                 </li>
             </ul>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.search-history.index') }}">
+                    <i class="fas fa-search"></i>
+                    <span>Historique des recherches</span>
+                </a>
+            </li>
         </div>
     </nav>
     <main>

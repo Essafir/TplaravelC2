@@ -1,23 +1,20 @@
 <?php
 
-namespace Database\Factories;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\SearchHistory>
- */
-class SearchHistoryFactory extends Factory
+class SearchHistory extends Model
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    protected $fillable = ['user_id', 'query', 'searched_at'];
+    
+    public function user()
     {
-        return [
-            //
-        ];
+        return $this->belongsTo(User::class);
+    }
+    
+    public function book()
+    {
+        return $this->belongsTo(Book::class, 'query', 'title'); 
     }
 }

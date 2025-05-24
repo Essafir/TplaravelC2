@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Middleware\CheckRole;
+use App\Http\Controllers\Admin\SearchHistoryController;
 
 
 
@@ -64,6 +65,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy'); 
         Route::post('/{user}/ban', [UserController::class, 'ban'])->name('ban');
         Route::post('/{user}/unban', [UserController::class, 'unban'])->name('unban');
+
+        Route::get('/{user}/history', [SearchHistoryController::class, 'userHistory'])->name('history');
     });
 
     
@@ -76,6 +79,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', CheckRole::class . '
         'update' => 'categories.update',
         'destroy' => 'categories.destroy'
     ]);
+
+
+    
+    Route::prefix('search-history')->name('search-history.')->group(function () {
+        Route::get('/', [SearchHistoryController::class, 'index'])->name('index');
+        Route::get('/user/{user}', [SearchHistoryController::class, 'userHistory'])->name('user');
+        Route::delete('/{history}', [SearchHistoryController::class, 'destroy'])->name('destroy');
+        Route::delete('/', [SearchHistoryController::class, 'clearAll'])->name('clear-all');
+    });
+
 
     ;
 });
